@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-
+// Ahora si, el comienzo de algo grande
 const app = express();
 
 app.use(bodyParser.json());
