@@ -1,4 +1,4 @@
-# git config core.excludesFile config/.gitignore
+# git config core.excludesFile .\config\.gitignore
 
 node_modules/
 dist/
