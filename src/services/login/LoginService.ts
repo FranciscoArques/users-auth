@@ -1,40 +1,50 @@
-import { Request, Response, Router } from "express";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-const router = Router();
-const auth = getAuth();
+import { Request, Response, Router } from 'express';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { auth } from '../../db/firebase-admin-service';
 
-router.post("/signup", async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
-    const newUser = await createUserWithEmailAndPassword(auth, email, password);
-    return res.status(200).json(newUser.user);
-  } catch (err: any) {
-    return res.status(500).json({ message: err.message });
+class AuthRoutes {
+  public router: Router;
+
+  constructor() {
+    this.router = Router();
+    this.initializeRoutes();
   }
-});
 
-router.post("/login", async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
-    const data = await signInWithEmailAndPassword(auth, email, password);
-    return res.status(200).json(data.user);
-  } catch (err: any) {
-    return res.status(500).json({ message: err.message });
+  private initializeRoutes() {
+    this.router.post('/signup', this.signUp);
+    this.router.post('/login', this.login);
+    this.router.post('/signout', this.signOut);
   }
-});
 
-router.post("/signout", async (req: Request, res: Response) => {
-  try {
-    await signOut(auth);
-    return res.status(200).json({ message: "ok" });
-  } catch (err: any) {
-    return res.status(500).json({ message: err.message });
+  private async signUp(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const newUser = await createUserWithEmailAndPassword(auth, email, password);
+      return res.status(200).json(newUser.user);
+    } catch (err: any) {
+      return res.status(500).json({ message: err.message });
+    }
   }
-});
 
-module.exports = router;
+  private async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const data = await signInWithEmailAndPassword(auth, email, password);
+      return res.status(200).json(data.user);
+    } catch (err: any) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+
+  private async signOut(req: Request, res: Response) {
+    try {
+      await signOut(auth);
+      return res.status(200).json({ message: 'ok' });
+    } catch (err: any) {
+      return res.status(500).json({ message: err.message });
+    }
+  }
+}
+
+const authRoutesInstance = new AuthRoutes();
+export default authRoutesInstance.router;
