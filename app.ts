@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-require("./db/db");
+require("./src/firebase/db");
 
 const app = express();
 
@@ -11,7 +11,7 @@ app.get('/api', (req: Request, res: Response) => {
   res.send({ status: 'ok', message: 'Health check passed!' });
 });
 
-app.use('/auth', require('./services/login/LoginService'));
+app.use('/auth', require('./src/services/login/LoginService'));
 const PORT = 3000;
 
 app.listen(PORT, () => {
